@@ -1,4 +1,11 @@
 class Product:
+    image = ''
+    description = ''
+    link = ''
+    price = 0.0  # Preço do produto
+    salePrice = 0.0  # Preço anterior do produto, caso seja uma promoção
+    rating = 0.0
+
     def __init__(self, image, description, link, price, rating):
         self.image = image
         self.description = description
@@ -20,6 +27,9 @@ class Product:
     #
     # def set_price(self, price):
     #     self.price = price
+        
+    def set_sale_price(self, salePrice):
+        self.salePrice = salePrice
     #
     # def set_rating(self, rating):
     #     self.rating = rating
