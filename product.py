@@ -1,9 +1,10 @@
 class Product:
-    def __init__(self, image, description, link, price, rating):
+    def __init__(self, image, description, link, price, prev_price, rating):
         self.image = image
         self.description = description
         self.link = link
         self.price = price
+        self.prev_price = prev_price
         self.rating = rating
 
     # def set_product(self, image, description, price, rating):

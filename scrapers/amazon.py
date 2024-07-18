@@ -20,7 +20,7 @@ def scrape_amazon(search):
     # Definindo a url da pesquisa
     url = store_url + search.replace(' ', '+')
 
-    # Vai até a url designada
+    # Vai até a url designada, da Amazon
     driver.get(url)
 
     product_list = []  # Lista que será usada para armazenar os objetos
@@ -62,10 +62,20 @@ def scrape_amazon(search):
             # Pegando a Avaliação do Produto e colocando no formato do Banco
             rating = float(search_rating.get_property('innerText').split(' ', 1)[0].replace(',', '.'))
 
+            # Tente achar a tag que contém tanto o preço "riscado" quanto o preço da parcela
+            search_prev_price = product_card.find_element(By.CLASS_NAME, 'a-price.a-text-price')
+
+            # A tag que contém o preço da parcela NÃO possui esse atributo, ou seja,
+            # Ele verifica se é o preço "riscado"
+            if search_prev_price.get_attribute('data-a-strike'):
+                prev_price = float(search_prev_price.text[2:].replace('.', '').replace(',', '.'))
+            else:
+                prev_price = None
+
         except NoSuchElementException:
             continue
 
-        product = Product(image, description, link, price, rating)  # Instanciando o objeto Product
+        product = Product(image, description, link, price, prev_price, rating)  # Instanciando o objeto Product
         product_list.append(product)  # Adicionando o objeto na lista
         # fim do for
 
