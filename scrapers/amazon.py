@@ -1,7 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+
 from selenium.common.exceptions import NoSuchElementException
+
 from product import Product
 
 # A classe Service é usada para iniciar uma instância do Browser WebDriver
@@ -34,15 +36,33 @@ def scrape_amazon(search):
         if product_card.get_attribute('id'):
             continue
 
+        # ===== ÁREA DE PESQUISA DO PREÇO PROMOCIONAL =====
+        # Fora do try geral porque não é obrigatório para o produto
+
+        try:
+            # Tente achar a tag que contém tanto o preço "riscado" quanto o preço da parcela
+            search_prev_price = product_card.find_element(By.CLASS_NAME, 'a-price.a-text-price')
+
+            # A tag que contém o preço da parcela NÃO possui esse atributo, ou seja,
+            # ele verifica se é o preço "riscado" (preço original do produto em oferta)
+            if search_prev_price.get_attribute('data-a-strike'):
+                prev_price = float(search_prev_price.text[2:].replace('.', '').replace(',', '.'))
+            else:
+                prev_price = None
+
+        except NoSuchElementException:
+            prev_price = None
+
+        # =================================================
+
         try:
             # Procurando a imagem
             search_image = product_card.find_element(By.CLASS_NAME, 's-image')
+            image = None
 
-            # Pegando a Imagem do produto, caso tenha o atributo srcset
+            # Pegando a imagem do produto, caso tenha o atributo srcset
             if search_image.get_attribute('srcset'):
                 image = search_image.get_attribute('src')
-            else:
-                image = None
 
             # Procurando a descrição
             search_description = product_card.find_element(By.CLASS_NAME, 'a-size-base-plus.a-color-base.a-text-normal')
@@ -61,16 +81,6 @@ def scrape_amazon(search):
             search_rating = product_card.find_element(By.CLASS_NAME, 'a-icon-star-small')
             # Pegando a Avaliação do Produto e colocando no formato do Banco
             rating = float(search_rating.get_property('innerText').split(' ', 1)[0].replace(',', '.'))
-
-            # Tente achar a tag que contém tanto o preço "riscado" quanto o preço da parcela
-            search_prev_price = product_card.find_element(By.CLASS_NAME, 'a-price.a-text-price')
-
-            # A tag que contém o preço da parcela NÃO possui esse atributo, ou seja,
-            # Ele verifica se é o preço "riscado"
-            if search_prev_price.get_attribute('data-a-strike'):
-                prev_price = float(search_prev_price.text[2:].replace('.', '').replace(',', '.'))
-            else:
-                prev_price = None
 
         except NoSuchElementException:
             continue
