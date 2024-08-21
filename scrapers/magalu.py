@@ -20,33 +20,37 @@ def scrape_magalu(search):
     product_list = []
 
     # Encontra todos os elementos da Classe: "a-section.a-spacing-base" no site (os cards de produtos)
-    all_cards = driver.find_elements(By.CLASS_NAME, 'sc-fTyFcS.iTkWie')
+    all_cards = driver.find_elements(By.CLASS_NAME, 'sc-SSKRe.kzxbRz')
+    print('all_cards = driver.find_elements(By.CLASS_NAME, sc-SSKRe.kzxbRz)')
 
     for product_card in all_cards:
+        print('for product_card in all_cards:')
+        try:
+            search_prev_price = product_card.find_element(By.CLASS_NAME, 'sc-kpDqfm.efxPhd.sc-gEkIjz.jmNQlo')
+            prev_price = float(search_prev_price.text.split(' ', 1)[1].replace('.', '').replace(',', '.'))
+        except NoSuchElementException:
+            prev_price = None
 
         try:
             search_image = product_card.find_element(By.CLASS_NAME, 'sc-cWSHoV.iJPAvC')
             image = search_image.get_attribute('src')
 
-            search_description = product_card.find_element(By.CLASS_NAME, 'sc-elxqWl.kWTxnF')
+            search_description = product_card.find_element(By.CLASS_NAME, 'sc-doohEh.dHamKz')
             description = search_description.text
 
-            search_link = product_card.find_element(By.CLASS_NAME, 'sc-eBMEME.uPWog.sc-evdWiO.gqyJd.sc-evdWiO.gqyJd')
+            search_link = product_card.find_element(By.CLASS_NAME, 'sc-eBMEME.uPWog.sc-dxUMQK.jeUYOh.sc-dxUMQK.jeUYOh')
             link = search_link.get_attribute('href')
 
             search_price = product_card.find_element(By.CLASS_NAME, 'sc-kpDqfm.eCPtRw.sc-bOhtcR.dOwMgM')
 
             price = float(search_price.text.split(' ', 1)[1].replace('.', '').replace(',', '.'))
 
-            # *colocar verificação para caso exista, assim não ativando o except
-            search_prev_price = product_card.find_element(By.CLASS_NAME, 'sc-kpDqfm.efxPhd.sc-gEkIjz.jmNQlo')
-            prev_price = float(search_prev_price.text.split(' ', 1)[1].replace('.', '').replace(',', '.'))
-
             search_rating = product_card.find_element(By.CLASS_NAME, 'sc-epqpcT.jdMYPv')
             rating = float(search_rating.text.split(' ', 1)[0])
-        except NoSuchElementException:
-            print('Não encontrei')
 
+            print('Encontrei :D')
+        except NoSuchElementException:
+            print('Não encontrei :/')
             continue
 
         product = Product(image, description, link, price, prev_price, rating)  # Instanciando o objeto Product
