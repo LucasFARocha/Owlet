@@ -13,13 +13,13 @@ def scrape_magalu(search):
     store_url = 'https://www.magazineluiza.com.br/busca/'
     url = store_url + search.replace(' ', '+')
 
-    # Vai até a url designada da Magazine Luiza
+    # Vai até a url designada
     driver.get(url)
 
     # product_list = []  # Lista que será usada para armazenar os objetos
     product_list = []
 
-    # Encontra todos os elementos da Classe: "a-section.a-spacing-base" no site (os cards de produtos)
+    # Encontra todos os elementos da Classe: "sc-SSKRe.kzxbRz" no site (os cards de produtos)
     all_cards = driver.find_elements(By.CLASS_NAME, 'sc-SSKRe.kzxbRz')
     print('all_cards = driver.find_elements(By.CLASS_NAME, sc-SSKRe.kzxbRz)')
 
